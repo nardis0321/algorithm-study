@@ -25,18 +25,17 @@ public class B13305 {
         // 처음 출발할 때 자동차에는 기름이 없어서 주유소에서 기름을 넣고 출발하여야 한다. 기름통의 크기는 무제한
         // 도로를 이용하여 이동할 때 1km마다 1리터의 기름을 사용한다.
 
-        // 이렇게 하면? 더 싼 가격이 있으면 0~N까지, 더 싼 가격이 없으면 price[0]으로 쭉~~ 간다.
-        // 더 싼 가격이 있을 경우? 이걸 또 해야됨.
-
         int minPrice = price[0];
-        int total = 0;
-        for (int i = 0; i < N - 1; i++) {
+        long total = (long) minPrice * distance[0];    // 첫번째에서는 꼭 넣어야 함
+        for (int i = 1; i < N - 1; i++) {
             if (price[i] < minPrice) {
                 minPrice = price[i];
             }
-            total += minPrice * distance[i];
+            total += (long) minPrice * distance[i];
         }
 
         System.out.println(total);
+
+        // 1,000,000,000 * 1,000,000,000 = 1,000,000,000,000,000,000 => int로는 부족했다!! Overflow
     }
 }
