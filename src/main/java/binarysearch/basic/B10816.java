@@ -5,37 +5,36 @@ import java.util.Scanner;
 
 public class B10816 {
 
-    static int binarySearch(int[] a, int target){
+    // 여전히 시간 초과... 카드가 50만 개 > 개수 탐색 > 해쉬맵 쓰면 O(1)
+    static int upperBound(int[] a, int target){
         int left = 0;
-        int right = a.length-1;
-        int mid = (left+right)/2;
-        int cnt = 0;
+        int right = a.length;   // 배열 바깥이 upper 값일 경우 고려해야 함
 
-        while(left <= right){
-
-            // 시간 초과!!!
-            // 만약 입력 배열이 거의 전부 같은 숫자라면? N ≤ 500,000번 선형탐색 해야 함!
-            if(a[mid] == target){
-                cnt++;
-                int index = mid;
-                while(mid < target-1 && a[++mid] == target){
-                    cnt++;
-                }
-                while(a[--index] == target && index > 0){
-                    cnt++;
-                }
-                return cnt;
-            } else if (a[mid] < target) {
-                left = mid+1;
-                mid = (left+right)/2;
-            } else {
-                right = mid-1;
-                mid = (left+right)/2;
+        while(left < right) {
+            int mid = (left+right)/2;
+            if(a[mid] <= target){
+                left = mid + 1;
+            } else { // a[mid] > target
+                right = mid;
             }
         }
-        return cnt;
+        return right;
     }
 
+    static int lowerBound(int[] a, int target){
+        int left = 0;
+        int right = a.length-1;
+
+        while(left < right) {
+            int mid = (left+right)/2;
+            if(a[mid] < target){
+                left = mid + 1;
+            } else { // a[mid] > target
+                right = mid;
+            }
+        }
+        return left;
+    }
 
     public static void main(String[] args) {
         // 첫째 줄에 상근이가 가지고 있는 숫자 카드의 개수 N(1 ≤ N ≤ 500,000)이 주어진다.
@@ -57,8 +56,9 @@ public class B10816 {
         for (int i = 0; i < M; i++) {
             int target = sc.nextInt();
             // 각 수가 적힌 숫자 카드를 상근이가 몇 개 가지고 있는지를 공백으로 구분해 출력
-            int result = binarySearch(integers, target);
-            System.out.printf("%d ", result);
+            int lower = lowerBound(integers, target);
+            int upper = upperBound(integers, target);
+            System.out.print(upper - lower + " ");
         }
     }
 }
