@@ -23,12 +23,7 @@ public class C1781 {
         // 문제를 푸는데는 단위 시간 1이 걸리며
         // 문제를 시간 내에 풀어 동호가 받을 수 있는 최대 컵라면 수
 
-        Arrays.sort(deadlineAndReward, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                return Integer.compare(o1[0], o2[0]);
-            }
-        }); // 데드라인이 빠른 순서대로 정렬
+        Arrays.sort(deadlineAndReward, Comparator.comparingInt(o -> o[0])); // 데드라인이 빠른 순서대로 정렬
 
         // 1 2 5 6 4 3 7
         // 1 1 2 2 3 3 6

@@ -1,6 +1,5 @@
 package greedy.basic.a;
 
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class A5585 {

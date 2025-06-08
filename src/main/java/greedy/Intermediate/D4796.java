@@ -37,9 +37,7 @@ public class D4796 {
             int V = vacationDays.get(i);
 
             // P 중에 L일만 사용, V동안...
-            int result = 0;
-
-            result = V/P * L;
+            int result = V/P * L;
             result += Math.min(V % P, L);
 
             System.out.println("Case " + (i+1) + ": "+result);
