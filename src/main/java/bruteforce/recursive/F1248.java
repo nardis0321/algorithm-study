@@ -12,22 +12,24 @@ public class F1248 {
 
     // Sij= ai부터 aj까지의 합에 따라 + 0 -
     static int n;
-    static int[] integers;
     static char[][] signs;
-    static String sign;
+    static int[] integers;
+    static int[] sum;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         n = Integer.parseInt(br.readLine());
-        sign = br.readLine();
+        String line = br.readLine();
         signs = new char[n][n];
+        integers = new int[n];
+        sum = new int[n];
+
         int idx = 0;
         for (int i = 0; i < n; i++) {
             for (int j = i; j < n; j++) {
-                signs[i][j] = sign.charAt(idx++);
+                signs[i][j] = line.charAt(idx++);
             }
         }
-        integers = new int[n];
 
         dfs(0);
     }
@@ -35,7 +37,7 @@ public class F1248 {
     static boolean dfs(int depth){
         if(depth == n){
             for (int integer : integers) {
-                System.out.println(integer+" ");
+                System.out.print(integer+" ");
             }
             return true;
         }
@@ -45,15 +47,15 @@ public class F1248 {
 
             boolean flag = true;
             integers[depth] = i;
+            sum[depth] = i;
+            if(depth > 0) sum[depth] += sum[depth-1];
+
             for (int j = 0; j <= depth; j++) {
-
-                int sum = sum(j, depth);
-
-                if(sum > 0 && signs[j][depth] == '+'){
-                } else if (sum < 0 && signs[j][depth] == '-'){
-                } else if(sum == 0 && signs[j][depth] == '0'){
-                } else {
+                if(sum(j, depth) > 0 && signs[j][depth] != '+'
+                || sum(j, depth) < 0 && signs[j][depth] != '-'
+                || sum(j, depth) == 0 && signs[j][depth] != '0') {
                     flag = false;
+                    break;
                 }
             }
 
@@ -64,12 +66,11 @@ public class F1248 {
         return false;
     }
 
-    static int sum(int i, int j){
-        int result = 0;
-        for (int k = i; k <= j; k++) {
-            result += integers[k];
+    static int sum(int start, int last){
+        if(start>0){
+            return sum[last] - sum[start-1];
         }
-        return result;
+        return sum[last];
     }
 
 }
