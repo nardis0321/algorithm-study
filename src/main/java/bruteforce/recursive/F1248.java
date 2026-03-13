@@ -14,7 +14,8 @@ public class F1248 {
     static int n;
     static char[][] signs;
     static int[] integers;
-    static int[] sum;
+    static int[] sum; // sum[k] = a0 + a1 + ... + ak   (prefix sum), 0~k
+    static int[] runningSum; // sum[j] = a_j + a_{j+1} + ... + a_depth, j~depth
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,7 +23,7 @@ public class F1248 {
         String line = br.readLine();
         signs = new char[n][n];
         integers = new int[n];
-        sum = new int[n];
+        runningSum = new int[n];
 
         int idx = 0;
         for (int i = 0; i < n; i++) {
@@ -45,32 +46,25 @@ public class F1248 {
         // 만들고, pruning
         for (int i = -10; i <= 10; i++) {
 
-            boolean flag = true;
+            boolean ok = true;
             integers[depth] = i;
-            sum[depth] = i;
-            if(depth > 0) sum[depth] += sum[depth-1];
 
-            for (int j = 0; j <= depth; j++) {
-                if(sum(j, depth) > 0 && signs[j][depth] != '+'
-                || sum(j, depth) < 0 && signs[j][depth] != '-'
-                || sum(j, depth) == 0 && signs[j][depth] != '0') {
-                    flag = false;
-                    break;
-                }
+            for (int j = depth; j >= 0; j--) {  // Sij보다 Sii가 더 강력한 조건이니까 j = depth로 시작
+                runningSum[j] += i; // j-depth 합
+
+                int sum = runningSum[j];
+                int sign = signs[j][depth];
+
+                if(sum > 0 && sign != '+') ok = false;
+                if(sum < 0 && sign != '-') ok = false;
+                if(sum == 0 && sign != '0') ok = false;
+
+                if(!ok) break;
             }
 
-            if(flag){
-                if(dfs(depth+1)) return true;
-            }
+            if(ok && dfs(depth+1)) return true;
         }
         return false;
-    }
-
-    static int sum(int start, int last){
-        if(start>0){
-            return sum[last] - sum[start-1];
-        }
-        return sum[last];
     }
 
 }
