@@ -13,7 +13,7 @@ public class F1248 {
     // Sij= ai부터 aj까지의 합에 따라 + 0 -
     static int n;
     static char[][] signs;
-    static int[] integers;
+    static int[] a;
     static int[] sum; // sum[k] = a0 + a1 + ... + ak   (prefix sum), 0~k
     static int[] runningSum; // sum[j] = a_j + a_{j+1} + ... + a_depth, j~depth
 
@@ -22,7 +22,7 @@ public class F1248 {
         n = Integer.parseInt(br.readLine());
         String line = br.readLine();
         signs = new char[n][n];
-        integers = new int[n];
+        a = new int[n];
         runningSum = new int[n];
 
         int idx = 0;
@@ -32,12 +32,53 @@ public class F1248 {
             }
         }
 
-        dfs(0);
+//        dfs(0);
+        fasterDfs(0);
+    }
+
+    static boolean fasterDfs(int depth){
+        if(depth == n){
+            for (int integer : a) {
+                System.out.print(integer+" ");
+            }
+            return true;
+        }
+
+        char sign = signs[depth][depth];
+        if(sign == '+'){
+            for (int i = 1; i <= 10; i++) {
+                a[depth] = i;
+                if(check(depth) && fasterDfs(depth+1)) return true;
+            }
+        } else if (sign == '-'){
+            for (int i = -10; i < 0; i++){
+                a[depth] = i;
+                if(check(depth) && fasterDfs(depth+1)) return true;
+            }
+        } else if (sign == '0'){
+            a[depth] = 0;
+            return check(depth) && fasterDfs(depth + 1);
+        }
+        return false;
+    }
+
+    static boolean check(int depth){
+        for (int i = depth; i >= 0; i--) {
+            runningSum[i] = 0;
+            for (int j = i; j <= depth; j++) {
+                runningSum[i] += a[j];
+            }
+
+            if(runningSum[i] > 0 && signs[i][depth] != '+') return false;
+            if(runningSum[i] < 0 && signs[i][depth] != '-') return false;
+            if(runningSum[i] == 0 && signs[i][depth] != '0') return false;
+        }
+        return true;
     }
 
     static boolean dfs(int depth){
         if(depth == n){
-            for (int integer : integers) {
+            for (int integer : a) {
                 System.out.print(integer+" ");
             }
             return true;
@@ -47,7 +88,7 @@ public class F1248 {
         for (int i = -10; i <= 10; i++) {
 
             boolean ok = true;
-            integers[depth] = i;
+            a[depth] = i;
 
             for (int j = depth; j >= 0; j--) {  // Sij보다 Sii가 더 강력한 조건이니까 j = depth로 시작
                 runningSum[j] += i; // j-depth 합
