@@ -30,16 +30,12 @@ public class D10819 {
         // 하나씩 다 바꿔서 최대값인지 확인하기
         b = new int[n];
         visited = new boolean[n];
-        dfs(0);
+        dfs(0, 0);
         System.out.println(max);
     }
 
-    static void dfs(int depth){
+    static void dfs(int depth, int sum){
         if(depth == n){
-            int sum = 0;
-            for (int i = 1; i < n; i++) {
-                sum += Math.abs(b[i-1] - b[i]);
-            }
             max = Math.max(sum, max);
             return;
         }
@@ -48,10 +44,10 @@ public class D10819 {
             if(!visited[i]){
                 b[depth] = a[i];
                 visited[i] = true;
-                dfs(depth+1);
+                dfs(depth+1, depth == 0? 0 : sum + Math.abs(b[depth-1] - b[depth]));
                 visited[i] = false;
             }
         }
     }
-    
+
 }
