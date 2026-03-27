@@ -1,5 +1,6 @@
 package bruteforce.permutation;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class D10819 {
@@ -26,11 +27,25 @@ public class D10819 {
             a[i] = sc.nextInt();
         }
 
+        // Next permutation 방식이나 백트래킹이나 메모리/시간차이 미약
+
+        /* 백트래킹 풀이 */
         // 모든 순열 개수 = 8! = 40320 가능
         // 하나씩 다 바꿔서 최대값인지 확인하기
-        b = new int[n];
-        visited = new boolean[n];
-        dfs(0, 0);
+//        b = new int[n];
+//        visited = new boolean[n];
+//        dfs(0, 0);
+//        System.out.println(max);
+
+        /* Next Permutation 풀이 */
+        Arrays.sort(a);
+        max = Math.max(max, sum());
+
+        boolean flag = true;
+        while (flag){
+            flag = findNextPermutation();
+        }
+
         System.out.println(max);
     }
 
@@ -48,6 +63,62 @@ public class D10819 {
                 visited[i] = false;
             }
         }
+    }
+
+    static boolean findNextPermutation(){
+        // 순열 왼<오인 지점 찾기
+        int pivotIdx = -1;
+        for (int i = n-1; i > 0; i--) {
+            if(a[i-1] < a[i]){
+                pivotIdx = i-1;
+                break;
+            }
+        }
+
+        if(pivotIdx == -1){
+            return false;
+        }
+
+        // swap : pivot의 오른쪽에서 Pivot보다 크고 제일 작은 수
+        int swapIdx = pivotIdx;
+        int swapA = Integer.MAX_VALUE;
+        for (int i = pivotIdx+1; i < n; i++) {
+            if(a[pivotIdx] > a[i]){
+                continue;
+            }
+
+            if(a[i] < swapA){
+                swapIdx = i;
+                swapA = a[i];
+            }
+        }
+        swap(pivotIdx, swapIdx);
+
+        // pivot 오른쪽 반전
+        int left = pivotIdx+1;
+        int right = n-1;
+        while(left<right){
+            swap(left, right);
+            left++;
+            right--;
+        }
+
+        max = Math.max(max, sum());
+        return true;
+    }
+
+    static void swap(int idx1, int idx2){
+        int temp = a[idx1];
+        a[idx1] = a[idx2];
+        a[idx2] = temp;
+    }
+
+    static int sum(){
+        int sum = 0;
+        for (int i = 1; i < n; i++) {
+            sum += Math.abs(a[i-1] - a[i]);
+        }
+        return sum;
     }
 
 }
