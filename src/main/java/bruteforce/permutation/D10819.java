@@ -41,10 +41,9 @@ public class D10819 {
         Arrays.sort(a);
         max = Math.max(max, sum());
 
-        boolean flag = true;
-        while (flag){
-            flag = findNextPermutation();
-        }
+        do {
+            max = Math.max(max, sum());
+        } while (findNextPermutation());
 
         System.out.println(max);
     }
@@ -80,16 +79,12 @@ public class D10819 {
         }
 
         // swap : pivot의 오른쪽에서 Pivot보다 크고 제일 작은 수
+        // pivot 뒤는 이미 내림차순이니까 뒤에서부터 찾으면 됨
         int swapIdx = pivotIdx;
-        int swapA = Integer.MAX_VALUE;
-        for (int i = pivotIdx+1; i < n; i++) {
-            if(a[pivotIdx] > a[i]){
-                continue;
-            }
-
-            if(a[i] < swapA){
+        for (int i = n-1; i > pivotIdx; i--) {
+            if(a[pivotIdx] < a[i]){
                 swapIdx = i;
-                swapA = a[i];
+                break;
             }
         }
         swap(pivotIdx, swapIdx);
@@ -103,7 +98,6 @@ public class D10819 {
             right--;
         }
 
-        max = Math.max(max, sum());
         return true;
     }
 
