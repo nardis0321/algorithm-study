@@ -19,6 +19,7 @@ public class E10971 {
     // 갈 수 없는 경우 0임
     static boolean[] visited;
     static int min = Integer.MAX_VALUE;
+    static int[] path;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -31,9 +32,80 @@ public class E10971 {
             }
         }
 
-        visited[0] = true;
-        dfs(1, 0, 0);
+        /* dfs 풀이 */
+//        visited[0] = true;
+//        dfs(1, 0, 0);
+//        System.out.println(min);
+
+        /* next permutation 풀이
+        1부터 n-1까지의 순열 만들기 */
+        path = new int[n-1];
+        for (int i = 1; i < n; i++) {
+            path[i-1] = i;
+        }
+
+        do {
+            min = Math.min(min, calculateCost(path));
+        } while (findNextPermutation(path));
+
         System.out.println(min);
+    }
+
+
+    static int calculateCost(int[] path) {
+        int sum = 0;
+        if (w[0][path[0]] == 0) return Integer.MAX_VALUE;
+        sum += w[0][path[0]];
+
+        for (int i = 0; i < n-2; i++) {
+            int curr = path[i];
+            int next = path[i+1];
+            if(w[curr][next] == 0) return Integer.MAX_VALUE;
+            sum += w[curr][next];
+        }
+
+        if(w[path[n-2]][0] == 0) return Integer.MAX_VALUE;
+        sum += w[path[n-2]][0];
+
+        return sum;
+    }
+
+    static boolean findNextPermutation(int[] arr){
+        // pivot
+        int pivotIdx = -1;
+        for (int i = arr.length-1; i > 0 ; i--) {
+            if(arr[i-1] < arr[i]){
+                pivotIdx = i-1;
+                break;
+            }
+        }
+
+        if(pivotIdx == -1) return false;
+
+        // swap
+        for (int i = arr.length-1; i > pivotIdx; i--) {
+            if(arr[pivotIdx] < arr[i]){
+                swap(i, pivotIdx);
+                break;
+            }
+        }
+
+        // reverse
+        int left = pivotIdx+1;
+        int right = arr.length-1;
+        while(left < right){
+            swap(left, right);
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+
+    static void swap(int idx1, int idx2) {
+        int temp = path[idx1];
+        path[idx1] = path[idx2];
+        path[idx2] = temp;
     }
 
     static void dfs(int depth, int cost, int formerCity){
