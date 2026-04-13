@@ -3,6 +3,7 @@ package bruteforce.bitmask;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class A11723 {
     /**
@@ -19,6 +20,9 @@ public class A11723 {
      * empty: S를 공집합으로 바꾼다.
      */
 
+    // 집합의 있고 없고를 0과 1로 표현
+    // 비트마스크 풀이와 이전 풀이의 메모리/시간 차이 크지 않았으나 코드가 간결해졌고 효율도 더 좋긴 했다
+
     static int m; // 연산의 수 M (1 ≤ M ≤ 3,000,000)
     static int[] s = new int[21]; // 1있음 0없음, 처음에 공집합
     static StringBuilder sb = new StringBuilder();
@@ -28,9 +32,10 @@ public class A11723 {
         m = Integer.parseInt(br.readLine());
         for (int i = 0; i < m; i++) {
             String[] operation = br.readLine().split(" ");
+
             String operator = operation[0];
-            int operand = 0;
-            if(operation.length > 1) operand = Integer.parseInt(operation[1]);
+            int operand = (operation.length > 1)? Integer.parseInt(operation[1]) : 0;
+
             operate(operator, operand);
         }
 
@@ -39,6 +44,34 @@ public class A11723 {
     }
 
     static void operate (String operator, int operand){
+        switch (operator){
+            case "add":
+                s[operand] = 1;
+                break;
+
+            case "remove":
+                s[operand] = 0;
+                break;
+
+            case "check":
+                sb.append(s[operand]).append("\n");
+                break;
+
+            case "toggle":
+                s[operand] ^= 1;
+                break;
+
+            case "all":
+                Arrays.fill(s, 1);
+                break;
+
+            case "empty":
+                Arrays.fill(s, 0);
+                break;
+        }
+    }
+
+    static void operateWithoutBitmask (String operator, int operand){
         if(operator.equals("add")) s[operand] = 1;
 
         if(operator.equals("remove")) s[operand] = 0;
