@@ -10,7 +10,8 @@ public class B1182 {
     static int[] sequence; // 정수의 절댓값은 100,000을 넘지 않는다.
     static int cnt;
 
-    static void main() {
+    public static void main(String[] args){
+        /* 입력 */
         Scanner sc = new Scanner(System.in);
         n = sc.nextInt();
         s = sc.nextInt();
@@ -19,8 +20,29 @@ public class B1182 {
             sequence[i] = sc.nextInt();
         }
 
+        /* dfs 풀이*/
         dfs(0, 0);
         if(s == 0) cnt--; // 부분수열의 크기가 양수가 아닌 경우 1회
+        int dfsAnswer = cnt;
+
+        /* bitmask 풀이*/
+        // n개의 숫자에서 선택1하거나 안0 하거나
+        cnt = 0;
+        for (int mask = 1; mask < (1 << n); mask++) { // 크기가 양수니까 1에서 시작
+            int sum = 0;
+
+            for (int i = 0; i < n; i++) {
+                // mask의 i번째 비트가 1이면 → i번째 숫자 포함
+                if((mask & (1 << i)) != 0){ // == 1로 표현하면 안 됨!
+                    sum += sequence[i];
+                }
+            }
+
+            if(sum == s) cnt++;
+        }
+
+
+        /* 출력 */
         System.out.println(cnt);
     }
 
