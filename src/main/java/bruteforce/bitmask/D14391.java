@@ -3,6 +3,7 @@ package bruteforce.bitmask;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class D14391 {
     /**
@@ -16,71 +17,58 @@ public class D14391 {
      */
 
     static int n, m;
-    static int[][] nums;
+    static int[][] grid;
     static int max = Integer.MIN_VALUE;
 
     public static void main(String[] args) throws IOException {
         /* input */
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String firstLine = br.readLine();
-        n = firstLine.charAt(0) - '0';
-        m = firstLine.charAt(2) - '0';
-        nums = new int[n][m];
+        StringTokenizer st = new StringTokenizer(br.readLine()); // 공백 기준으로 토큰 분리 > 이전 방식보다 안전
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        grid = new int[n][m];
 
         for (int i = 0; i < n; i++) {
             String line = br.readLine();
             for (int j = 0; j < m; j++) {
-                nums[i][j] = line.charAt(j) - '0';
+                grid[i][j] = line.charAt(j) - '0';
             }
         }
 
         // bitmask, 0을 가로 1을 세로로 표현하기
         for (int mask = 0; mask < (1 << n*m); mask++) {
-            int sum = 0, total = 0;
+            int currentSum = 0, totalSum = 0;
 
             // 가로 계산
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < m; j++) {
                     if(isHorizontal(mask, i, j)){
-                        sum = sum*10 + nums[i][j];
-
-                        if(j == m-1){
-                            total += sum;
-                            sum = 0;
-                        }
+                        currentSum = currentSum*10 + grid[i][j];
                     } else {
-                        total += sum;
-                        sum = 0;
+                        totalSum += currentSum;
+                        currentSum = 0;
                     }
                 }
+                totalSum += currentSum;
+                currentSum = 0;
             }
 
             // 세로 계산
-            // 주의점 : mask는 가로 방향으로 늘어남
-            // 세로 크기 최대 4
-            int[] verticalSum = new int[m];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
+            for (int j = 0; j < m; j++) {
+                for (int i = 0; i < n; i++) {
 
                     if(isVertical(mask, i, j)){
-                        if(i >= 1 && isVertical(mask, i-1, j)){ // 연속된 세로인지
-                            verticalSum[j] = verticalSum[j]*10 + nums[i][j];
-                        } else {
-                            verticalSum[j] += nums[i][j];
-                        }
-
-                        if(i == n-1){ // 마지막 행
-                            total += verticalSum[j];
-                            verticalSum[j] = 0;
-                        }
-                    } else { // 가로
-                        total += verticalSum[j];
-                        verticalSum[j] = 0;
+                        currentSum = currentSum*10 + grid[i][j];
+                    } else {
+                        totalSum += currentSum;
+                        currentSum = 0;
                     }
                 }
+                totalSum += currentSum;
+                currentSum = 0;
             }
 
-            max = Math.max(max, total);
+            max = Math.max(max, totalSum);
         }
 
         System.out.println(max);
